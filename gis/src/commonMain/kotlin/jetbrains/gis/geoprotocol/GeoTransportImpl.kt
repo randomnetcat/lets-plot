@@ -13,7 +13,11 @@ import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.gis.geoprotocol.json.RequestJsonFormatter
 import jetbrains.gis.geoprotocol.json.ResponseJsonParser
 import kotlinx.coroutines.launch
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
+@ExperimentalJsExport
+@JsExport
 class GeoTransportImpl(
     private val myUrl: String
 ): GeoTransport {

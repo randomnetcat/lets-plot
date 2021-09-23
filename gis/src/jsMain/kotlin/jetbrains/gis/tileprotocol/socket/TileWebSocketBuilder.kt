@@ -9,6 +9,8 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.js.Js
 import io.ktor.client.features.websocket.WebSockets
 
+@ExperimentalJsExport
+@JsExport
 actual class TileWebSocketBuilder
 actual constructor(
     private val myUrl: String

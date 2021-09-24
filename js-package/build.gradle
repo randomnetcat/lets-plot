@@ -28,8 +28,12 @@ kotlin {
         languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn")
     }
 
+
     target {
         browser {
+            dceTask {
+                keep.add("ktor-ktor-io.\$\$importsForInline\$\$.ktor-ktor-io.io.ktor.utils.io")
+            }
         }
 
         binaries.executable()

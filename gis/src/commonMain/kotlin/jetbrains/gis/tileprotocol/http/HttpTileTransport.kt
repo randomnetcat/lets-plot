@@ -11,11 +11,7 @@ import io.ktor.client.request.get
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.ThreadSafeAsync
 import kotlinx.coroutines.launch
-import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
 
-@ExperimentalJsExport
-@JsExport
 class HttpTileTransport {
     private val myClient = HttpClient()
 

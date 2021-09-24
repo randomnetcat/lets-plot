@@ -20,11 +20,9 @@ import jetbrains.livemap.core.rendering.layers.ParentLayerComponent
 import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.mapengine.basemap.*
 import jetbrains.livemap.mapengine.viewport.CellKey
-import kotlin.js.ExperimentalJsExport
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalJsExport::class)
 class RasterTileLoadingSystem(
     private val myDomains: List<String>,
     componentManager: EcsComponentManager
@@ -70,7 +68,7 @@ class RasterTileLoadingSystem(
                     MicroTaskUtil.create {
                         if (response.errorCode != null) {
                             val errorText = response.errorCode!!.message ?: "Unknown error"
-                            val tileCanvas = context.mapRenderContext.canvasProvider.createCanvas(TILE_PIXEL_DIMENSION)
+                            val tileCanvas = context.mapRenderContext.canvasProvider.createCanvas(TILE_PIXEL_DIMESION)
                             val tileCtx = tileCanvas.context2d
                             val textDim = tileCtx.measureText(errorText)
                             val x =
@@ -83,7 +81,7 @@ class RasterTileLoadingSystem(
                             tileCtx.fillText(errorText, x, TILE_PIXEL_SIZE / 2)
                             tileCanvas.takeSnapshot()
                         } else {
-                            context.mapRenderContext.canvasProvider.createSnapshot(imageData, TILE_PIXEL_DIMENSION)
+                            context.mapRenderContext.canvasProvider.createSnapshot(imageData, TILE_PIXEL_DIMESION)
                         }
                             .onSuccess { snapshot ->
                                 runLaterBySystem(httpTileEntity) { theEntity ->
@@ -124,7 +122,7 @@ class RasterTileLoadingSystem(
                         .replace("{y}", it.y.roundToInt().toString(), ignoreCase = true)
                 }
         }
-        val TILE_PIXEL_DIMENSION = Vector(TILE_PIXEL_SIZE.toInt(), TILE_PIXEL_SIZE.toInt())
+        val TILE_PIXEL_DIMESION = Vector(TILE_PIXEL_SIZE.toInt(), TILE_PIXEL_SIZE.toInt())
     }
 
     class HttpTileResponseComponent: EcsComponent {

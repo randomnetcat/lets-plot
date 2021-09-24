@@ -34,7 +34,6 @@ import jetbrains.livemap.mapengine.camera.CameraListenerComponent
 import jetbrains.livemap.mapengine.camera.CenterChangedComponent
 import jetbrains.livemap.mapengine.camera.ZoomFractionChangedComponent
 import jetbrains.livemap.ui.CursorService
-import kotlin.js.ExperimentalJsExport
 import kotlin.math.abs
 
 @DslMarker
@@ -226,7 +225,6 @@ class LiveMapTileServiceBuilder {
     }
 }
 
-@ExperimentalJsExport
 @LiveMapDsl
 class LiveMapGeocodingServiceBuilder {
     lateinit var url: String
@@ -291,7 +289,6 @@ fun LiveMapBuilder.projection(block: Projection.() -> Unit) {
 fun liveMapVectorTiles(block: LiveMapTileServiceBuilder.() -> Unit) =
     LiveMapTileServiceBuilder().apply(block).build()
 
-@ExperimentalJsExport
 fun liveMapGeocoding(block: LiveMapGeocodingServiceBuilder.() -> Unit): GeocodingService {
     return LiveMapGeocodingServiceBuilder().apply(block).build()
 }

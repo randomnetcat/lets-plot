@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.tooltip
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.base.values.Colors.darker
@@ -33,7 +34,8 @@ import kotlin.math.max
 import kotlin.math.min
 
 class TooltipBox(
-    private val tooltipMinWidth: Double? = null
+    private val tooltipMinWidth: Double? = null,
+    rotationAngle: Double? = null
 ): SvgComponent() {
     enum class Orientation {
         VERTICAL,
@@ -55,6 +57,8 @@ class TooltipBox(
     private val myPointerBox = PointerBox()
     private val myTextBox = TextBox()
 
+    private var myRotationAngle: Double = rotationAngle ?: 0.0
+
     private var textColor: Color = Color.BLACK
     private var fillColor: Color = Color.WHITE
     internal val pointerDirection get() = myPointerBox.pointerDirection // for tests
@@ -68,8 +72,7 @@ class TooltipBox(
         color: Color,
         lines: List<TooltipSpec.Line>,
         style: String,
-        isOutlier: Boolean,
-        rotate: Boolean
+        isOutlier: Boolean
     ) {
         addClassName(style)
         if (isOutlier) {
@@ -83,13 +86,23 @@ class TooltipBox(
             lines,
             labelTextColor = DARK_TEXT_COLOR,
             valueTextColor = textColor,
-            tooltipMinWidth,
-            rotate
+            tooltipMinWidth
         )
     }
 
-    internal fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {
-        myPointerBox.update(pointerCoord.subtract(tooltipCoord), orientation)
+    internal fun setPosition(
+        tooltipCoord: DoubleVector,
+        pointerCoord: DoubleVector,
+        orientation: Orientation
+    ) {
+        // Rotate component
+        rotate(-myRotationAngle)
+
+        // Pointer point should not be rotated
+        val p = pointerCoord.subtract(tooltipCoord)
+            .rotate(toRadians(myRotationAngle))
+
+        myPointerBox.update(p, orientation)
         moveTo(tooltipCoord.x, tooltipCoord.y)
     }
 
@@ -194,9 +207,10 @@ class TooltipBox(
             lines: List<TooltipSpec.Line>,
             labelTextColor: Color,
             valueTextColor: Color,
-            tooltipMinWidth: Double?,
-            rotate: Boolean
+            tooltipMinWidth: Double?
         ) {
+            val arrangeVertically = myRotationAngle != 0.0
+
             val linesInfo: List<Triple<String?, TextLabel?, TextLabel>> = lines.map { line ->
                 Triple(
                     line.label,
@@ -283,7 +297,7 @@ class TooltipBox(
                         ) + LINE_INTERVAL
                     )
                 }).let {  textSize ->
-                    if (rotate) {
+                  if (arrangeVertically) {
                         linesInfo
                             .onEach { (_, labelComponent, valueComponent) ->
                                 labelComponent?.rotate(90.0)
@@ -297,11 +311,11 @@ class TooltipBox(
                         textSize.flip()
                     } else {
                         textSize.subtract(DoubleVector(0.0, LINE_INTERVAL)) // remove LINE_INTERVAL from last line
-                    }
+                   }
                 }
 
             myLines.apply {
-                x().set(if (rotate) 0.0 else H_CONTENT_PADDING)
+                x().set(if (arrangeVertically) 0.0 else H_CONTENT_PADDING)
                 y().set(V_CONTENT_PADDING)
                 width().set(textSize.x + H_CONTENT_PADDING * 2)
                 height().set(textSize.y)

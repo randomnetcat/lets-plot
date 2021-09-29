@@ -41,8 +41,7 @@ class TooltipBoxTest {
                 Color.BLACK,
                 listOf(TooltipSpec.Line.withValue(wordText)),
                 "anyStyle",
-                isOutlier = false,
-                rotate = false
+                isOutlier = false
             )
         }
     }

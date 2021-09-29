@@ -78,8 +78,13 @@ internal class TooltipRenderer(
             .filter { spec -> spec.lines.isNotEmpty() }
             .map { spec ->
                 spec
-                    .run { newTooltipBox(spec.minWidth).apply { visible = false } } // to not flicker on arrange
-                    .apply { setContent(spec.fill, spec.lines, spec.style, spec.isOutlier, spec.layoutHint.kind == ROTATED_TOOLTIP) }
+                    .run {
+                        newTooltipBox(
+                            spec.minWidth,
+                            if (spec.layoutHint.kind == ROTATED_TOOLTIP) 30.0 else null
+                        )
+                            .apply { visible = false } } // to not flicker on arrange
+                    .apply { setContent(spec.fill, spec.lines, spec.style, spec.isOutlier) }
                     .run { MeasuredTooltip(tooltipSpec = spec, tooltipBox = this) }
             }
             .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, tooltipBounds) }
@@ -99,9 +104,9 @@ internal class TooltipRenderer(
 
     private fun clearTooltips() = myTooltipLayer.children().clear()
 
-    private fun newTooltipBox(tooltipMinWidth: Double?): TooltipBox {
+    private fun newTooltipBox(tooltipMinWidth: Double?, angle: Double?): TooltipBox {
         // Add to the layer to be able to calculate a bbox
-        return TooltipBox(tooltipMinWidth).apply { myTooltipLayer.children().add(rootGroup) }
+        return TooltipBox(tooltipMinWidth, angle).apply { myTooltipLayer.children().add(rootGroup) }
     }
 
     private fun newCrosshairComponent(): CrosshairComponent {
